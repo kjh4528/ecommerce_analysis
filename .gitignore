@@ -2,6 +2,13 @@
 __pycache__/
 *.py[codz]
 *$py.class
+*.py[cod]
+
+# data file
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*json
+*.parquet
 
 # C extensions
 *.so
@@ -76,7 +83,9 @@ docs/_build/
 target/
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+.virtual_documents/
 
 # IPython
 profile_default/
@@ -143,7 +152,20 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+config.ini
 
+# tableau
+*.twb~
+*.tbm
+.tableau/
+
+# os
+.DS_Store
+Thumbs.db
+
+# anaconda
+.conda/
+*.conda
 # Spyder project settings
 .spyderproject
 .spyproject
