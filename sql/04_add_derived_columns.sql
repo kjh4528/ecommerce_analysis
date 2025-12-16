@@ -1,0 +1,62 @@
+-- ============================================
+-- 파생변수 추가 및 인덱스 생성
+-- ============================================
+
+-- 1. 파생변수 컬럼 추가
+--ALTER TABLE cleaned_data 
+--    ADD COLUMN IF NOT EXISTS totalprice DECIMAL(10, 2),
+--    ADD COLUMN IF NOT EXISTS year INTEGER,
+--    ADD COLUMN IF NOT EXISTS month INTEGER,
+--    ADD COLUMN IF NOT EXISTS yearmonth VARCHAR(7),
+--    ADD COLUMN IF NOT EXISTS dayofweek INTEGER,
+--    ADD COLUMN IF NOT EXISTS hour INTEGER;
+
+-- 2. 파생변수 계산
+--UPDATE cleaned_data
+--SET 
+--    totalprice = quantity * unitprice,
+--    year = EXTRACT(YEAR FROM invoicedate),
+--    month = EXTRACT(MONTH FROM invoicedate),
+--    yearmonth = TO_CHAR(invoicedate, 'YYYY-MM'),
+--    dayofweek = EXTRACT(DOW FROM invoicedate),
+--    hour = EXTRACT(HOUR FROM invoicedate);
+--WHERE totalprice IS NULL;  -- 이미 계산된 행은 건너뜀 (재실행 시)
+
+-- 3. 인덱스 생성 (성능 향상)
+--CREATE INDEX IF NOT EXISTS idx_customerid ON cleaned_data(customerid);
+--CREATE INDEX IF NOT EXISTS idx_invoicedate ON cleaned_data(invoicedate);
+--CREATE INDEX IF NOT EXISTS idx_yearmonth ON cleaned_data(yearmonth);
+--CREATE INDEX IF NOT EXISTS idx_country ON cleaned_data(country);
+
+-- 4. 확인
+--SELECT 
+--    invoiceno, 
+--    quantity, 
+--    unitprice, 
+--    totalprice, 
+--    yearmonth, 
+--    dayofweek, 
+--    hour
+--FROM cleaned_data 
+--LIMIT 20;
+
+-- 5. 통계 확인
+--SELECT 
+--    COUNT(*) AS total_rows,
+--    COUNT(DISTINCT customerid) AS unique_customers,
+--    COUNT(DISTINCT invoiceno) AS unique_orders,
+--    MIN(invoicedate) AS start_date,
+--    MAX(invoicedate) AS end_date,
+--    ROUND(SUM(totalprice), 2) AS total_revenue,
+--    ROUND(AVG(totalprice), 2) AS avg_order_value
+--FROM cleaned_data;
+
+-- 6. 파생변수별 NULL 체크
+--SELECT 
+--    COUNT(*) FILTER (WHERE totalprice IS NULL) AS null_totalprice,
+--    COUNT(*) FILTER (WHERE yearmonth IS NULL) AS null_yearmonth,
+--    COUNT(*) FILTER (WHERE year IS NULL) AS null_year,
+--    COUNT(*) FILTER (WHERE month IS NULL) AS null_month,
+--    COUNT(*) FILTER (WHERE dayofweek IS NULL) AS null_dayofweek,
+--    COUNT(*) FILTER (WHERE hour IS NULL) AS null_hour
+--FROM cleaned_data;

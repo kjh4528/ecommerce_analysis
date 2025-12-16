@@ -18,42 +18,49 @@ PostgreSQL 기반 이커머스 고객 코호트 분석 및 시각화
 ## 📂 프로젝트 구조
 ```
 📁 ecommerce-cohort-analysis/
-├── data/        # 데이터 파
+├── data/        # 데이터 파일 
 ├── sql/         # 핵심 분석 쿼리
 ├── notebooks/   # jupyter notebook (파이썬)
 ├── tableau/     # 대시보드 파일
-└── docs/        # 분석 결과 문서
+└── docs/        # 분석 결과 및 의사결정 문서
 ```
 
 ## 🚀 진행 상황
 - [x] 프로젝트 초기 설정
 - [x] 데이터 다운로드
-- [x] **EDA 완료**
+- [x] **EDA **
   - 결측치 분석: CustomerID 24.9%, Description 0.27%
   - 이상치 발견: 음수 수량 10,624건 (반품 데이터)
   - 특수 코드 패턴 파악: 'C' 인보이스 = 취소 주문
 - [x] 데이터 전처리
-  - 이상치 처리: 음수 금액 제거, 'A'인보이스 3건 제
+  - 이상치 처리: 음수 금액 제거, 'A'인보이스 3건 제거 
   - 데이터 타입 변환: InvoiceDate → datetime
   **산출물**:
   - `cleaned_data.csv`: 정제된 데이터
   - `preprocessing_decision.md`: 전처리 과정 상세 기록
 - [x] PostgreSQL DB 구축
   **산출물**:
-  - 테이블 생성 및 데이터 적재 sql 스크립트
-  - python 데이터 로드 스크립
+  - '01_create_table&load_data.sql': sql 테이블 생성 및 데이터 적재 
+  - '03_sql_load_data.ipynb': 파이썬으로 sql 데이터 로드 
 - [x] 코호트 분석
 **목표**: 고객의 시간에 따른 재구매 패턴 파악
 
 **분석 방법**:
 1. 각 고객의 첫 구매 월 정의 (Cohort Month)
+2. 파생변수 생성 (totalprice, yearmonth, year, month, dayofweek, hour), 인덱스 생성
 2. 코호트별 월별 재구매 고객 수 집계
 3. 리텐션율 계산 및 히트맵 시각화
+
+**분석 과정**:
+1. 초기 버전 (`03_cohort_analysis.sql`): CTE로 모든 계산 처리
+2. 파생변수 추가 (`04_add_derived_columns.sql`): 반복 계산 제거
+3. 개선 버전 (`05_cohort_analysis_v2.sql`): 단순화 및 성능 향상
    
 **산출물**:
-- `02_cohort_analysis.sql`: SQL 분석 쿼리
+- `cohort_analysis.sql`: SQL 분석 쿼리
 - `cohort_results.csv`: 분석 결과 데이터
 - `cohort_heatmap.png`: 리텐션율 히트맵
+
 - [ ] RFM 세그먼테이션
 - [ ] Tableau 대시보드
 
