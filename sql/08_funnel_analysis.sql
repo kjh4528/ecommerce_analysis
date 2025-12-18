@@ -1,0 +1,182 @@
+--퍼널분석 전 테이블 구조 확인
+--SELECT column_name, data_type 
+--FROM information_schema.columns 
+--WHERE table_name = 'cleaned_data';
+
+-- rfm_customer_segments_v2 컬럼 확인
+--SELECT * FROM rfm_customer_segments_v2 LIMIT 3;
+
+-----------------------------------------------------------------------------
+-- 퍼널 분석 요약
+-- 전환율 계산 (생성된 4개의 뷰)
+-- 1. customer_purchase_stages (구매자의 구매 정보 집계한 뒤 구매 단계 분류)
+-- 2. funnel_conversion_rates (구매 단계별 전환율 계산)
+-- 3. funnel_by_rfm_segment (rfm과 조인하여 세그먼트별 퍼널 분포 확인)
+-- 4. funnel_segment_conversion (세그먼트별 구매 단계의 전환율 계산)
+-----------------------------------------------------------------------------
+
+-- 1단계: 각 고객의 구매 단계 분류 -> customer_purchase_stages 뷰 생성(기본 퍼널 테이블)
+--CREATE OR REPLACE VIEW customer_purchase_stages AS
+--WITH customer_orders AS (
+--    SELECT 
+--        customerid,
+--        invoiceno,
+--        invoicedate,
+--        totalprice,
+--        quantity,
+--        -- 취소 주문 제외
+--        CASE 
+--            WHEN invoiceno LIKE 'C%' OR quantity < 0 THEN TRUE 
+--            ELSE FALSE 
+--        END AS is_cancelled
+--    FROM cleaned_data
+--    WHERE customerid IS NOT NULL
+--),
+--valid_orders AS (
+--    SELECT *
+--    FROM customer_orders
+--    WHERE is_cancelled = FALSE 
+--      AND totalprice > 0
+--),
+--customer_metrics AS (
+--    SELECT 
+--        customerid,
+--        COUNT(DISTINCT invoiceno) AS total_orders,
+--        MIN(invoicedate) AS first_purchase_date,
+--        MAX(invoicedate) AS last_purchase_date,
+--        SUM(totalprice) AS total_spent
+--    FROM valid_orders
+--    GROUP BY customerid
+--)
+--SELECT 
+--    customerid,
+--    total_orders,
+--    first_purchase_date,
+--    last_purchase_date,
+--    total_spent,
+--    -- 구매 단계 분류
+--    CASE 
+--        WHEN total_orders = 1 THEN '1. First Purchase'
+--        WHEN total_orders = 2 THEN '2. Second Purchase'
+--        WHEN total_orders >= 3 AND total_orders < 5 THEN '3. Regular Customer'
+--        WHEN total_orders >= 5 THEN '4. Loyal Customer'
+--    END AS purchase_stage
+--FROM customer_metrics;
+
+
+-- 2단계: 퍼널 전환율 집계 뷰 생성 ->funnel_conversion_rates (전환율 계산)
+--CREATE OR REPLACE VIEW funnel_conversion_rates AS
+--WITH stage_counts AS (
+--    SELECT 
+--        purchase_stage,
+--        COUNT(DISTINCT customerid) AS customer_count
+--    FROM customer_purchase_stages
+--    GROUP BY purchase_stage
+--),
+--total_customers AS (
+--    SELECT COUNT(DISTINCT customerid) AS total 
+--    FROM customer_purchase_stages
+--)
+--SELECT 
+--    sc.purchase_stage,
+--    sc.customer_count,
+--    ROUND(sc.customer_count * 100.0 / tc.total, 2) AS percentage_of_total,
+--    ROUND(sc.customer_count * 100.0 / 
+--          LAG(sc.customer_count) OVER (ORDER BY sc.purchase_stage), 2) AS conversion_rate,
+--    ROUND(100 - (sc.customer_count * 100.0 / 
+--          LAG(sc.customer_count) OVER (ORDER BY sc.purchase_stage)), 2) AS drop_off_rate
+--FROM stage_counts sc
+--CROSS JOIN total_customers tc
+--ORDER BY sc.purchase_stage;
+
+-- 3단계: RFM 세그먼트별 퍼널 -> funnel_by_rfm_segment 뷰 생성(RFM 세그먼트와 결합)
+--CREATE OR REPLACE VIEW funnel_by_rfm_segment AS
+--WITH customer_stage_segment AS (
+--    SELECT 
+--        cps.customerid,
+--        cps.purchase_stage,
+--        cps.total_orders,
+--        cps.total_spent,
+--        rfm.segment_name,
+--        rfm.rfm_segment
+--    FROM customer_purchase_stages cps
+--    LEFT JOIN rfm_customer_segments_v2 rfm 
+--        ON cps.customerid = rfm.customerid
+--)
+--SELECT 
+--    segment_name,
+--    purchase_stage,
+--    COUNT(DISTINCT customerid) AS customer_count,
+--    ROUND(AVG(total_orders), 2) AS avg_orders,
+--    ROUND(AVG(total_spent), 2) AS avg_spent
+--FROM customer_stage_segment
+--WHERE segment_name IS NOT NULL
+--GROUP BY segment_name, purchase_stage
+--ORDER BY 
+--    CASE segment_name
+--        WHEN 'Champions' THEN 1
+--        WHEN 'Loyal' THEN 2
+--        WHEN 'Promising' THEN 3
+--        WHEN 'Big' THEN 4
+--        WHEN 'Need Attention' THEN 5
+--        WHEN 'Risk' THEN 6
+--        WHEN 'Hibernating' THEN 7
+--        WHEN 'Lost' THEN 8
+--        WHEN 'New' THEN 9
+--        ELSE 10
+--    END,
+--    purchase_stage;
+
+
+-- 4단계: 세그먼트별 전환율 상세 분석 -> funnel_segment_conversion 뷰 생성
+--CREATE OR REPLACE VIEW funnel_segment_conversion AS
+--WITH segment_funnel AS (
+--    SELECT 
+--        segment_name,
+--        purchase_stage,
+--        COUNT(DISTINCT customerid) AS customer_count
+--    FROM (
+--        SELECT 
+--            cps.customerid,
+--            cps.purchase_stage,
+--            rfm.segment_name
+--        FROM customer_purchase_stages cps
+--        LEFT JOIN rfm_customer_segments_v2 rfm 
+--            ON cps.customerid = rfm.customerid
+--        WHERE rfm.segment_name IS NOT NULL
+--    ) sub
+--    GROUP BY segment_name, purchase_stage
+--)
+--SELECT 
+--    segment_name,
+--    purchase_stage,
+--    customer_count,
+--    ROUND(customer_count * 100.0 / 
+--          SUM(customer_count) OVER (PARTITION BY segment_name), 2) AS pct_within_segment,
+--    ROUND(customer_count * 100.0 / 
+--          LAG(customer_count) OVER (PARTITION BY segment_name ORDER BY purchase_stage), 2) AS stage_conversion_rate
+--FROM segment_funnel
+--ORDER BY 
+--    CASE segment_name
+--        WHEN 'Champions' THEN 1
+--        WHEN 'Loyal' THEN 2
+--        WHEN 'Promising' THEN 3
+--        WHEN 'Big' THEN 4
+--        WHEN 'Need Attention' THEN 5
+--        WHEN 'Risk' THEN 6
+--        WHEN 'Hibernating' THEN 7
+--        WHEN 'Lost' THEN 8
+--        WHEN 'New' THEN 9
+--        ELSE 10
+--    END,
+--    purchase_stage;
+
+-- 전체 퍼널 확인
+SELECT * FROM funnel_conversion_rates;
+
+-- 세그먼트별 퍼널 분포
+SELECT * FROM funnel_by_rfm_segment;
+
+-- 세그먼트별 전환율 비교
+SELECT * FROM funnel_segment_conversion
+WHERE segment_name IN ('Champions', 'Loyal', 'Risk', 'Lost');
