@@ -117,8 +117,58 @@ PostgreSQL 기반 이커머스 고객 코호트 분석 및 시각화
   		- 첫 구매 → 재구매 구간이 최대 병목
   		- 2회 구매가 충성 고객 전환의 핵심 터닝 포인트
   		- Risk 세그먼트의 3→4 단계 이탈 집중 관리 필요
+- [x] 장바구니 분석(Market Basket Analysis) 
+ 1. 전체 분석 대상:
+   - 주문 수: 18,402개
+   - 상품 수: 3,659개
+   - 고객 수: 4,334명
 
-- [ ] 세그먼트별 상품 선호도 분석
+2. 빈발 항목 집합:
+   - 최소 지지도: 2.0%
+     - 초기 1% 설정 시 연산 속도 이슈로 2%로 튜닝
+   - 발견된 빈발 항목: 242개
+
+3. 연관 규칙:
+   - 생성된 전체 규칙: 76개
+   - 필터링 후 의미 있는 규칙: 68개
+     - Lift > 2
+     - Confidence > 30%
+     - Support > 1%
+
+4. 주요 인사이트(예시):
+1위 항목: ROSES REGENCY TEACUP AND SAUCER , GREEN REGENCY TEACUP AND SAUCER → PINK REGENCY TEACUP AND SAUCER
+- Lift: 23.86 | Confidence: 72.1% | Support: 2.12%
+- 해석: 'ROSES REGENCY TEACUP AND SAUCER , GREEN REGENCY TEACUP AND SAUCER'를 구매한 고객은 일반 고객보다 23.9배 더 'PINK REGENCY TEACUP AND SAUCER'를 구매함
+
+- [x] 세그먼트별 상품 선호도 분석
+
+1. 분석 대상
+   - RFM 기반 고객 세그먼트 활용
+   - SQL 집계 뷰 + Python 시각화 분석
+
+2. 분석 내용
+   - 세그먼트별 구매 카테고리 분포 분석
+   - 세그먼트별 TOP 상품 추출
+   - VIP(Champions) vs 신규(New) 고객 구매 패턴 비교
+   - 구매 빈도, 객단가, 카테고리 다양성 비교
+
+3. 주요 지표
+   - 카테고리 구매 비중
+   - 평균 구매 금액(AOV)
+   - 구매 빈도
+   - 선호도 지수 (Segment Preference Index)
+
+4. 시각화 산출물
+   - 세그먼트별 구매 패턴 비교 차트
+   - Champions vs New 비교 차트
+   - 세그먼트별 TOP 상품 시각화
+   - 세그먼트-상품 히트맵
+
+5. 활용 목적
+   - 세그먼트별 맞춤 상품 추천
+   - 타겟 프로모션 및 캠페인 기획
+   - MD 및 재고 전략 개선
+
 - [ ] 이탈 예측 모델 구축 (Risk → Lost 예측)
 - [ ] Tableau 대시보드
 
