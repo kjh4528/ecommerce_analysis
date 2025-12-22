@@ -46,6 +46,14 @@ PostgreSQL 기반 이커머스 고객 코호트 분석 및 시각화
    - '01_create_table&load_data.sql': sql 테이블 생성 및 데이터 적재 
    - '03_sql_load_data.ipynb': 파이썬으로 sql 데이터 로드 
 
+  - **(12.22 추가) 데이터 모델 정규화 및 구조 개선**
+    - 초기 단일 테이블(cleaned_data) 기반 분석 구조에서 3NF 정규화 모델로 개선
+    - customers / orders / order_items / products 테이블 분리
+    - 정규화 이후에도 기존 분석 흐름 유지를 위해 VIEW 기반 분석 구조 설계
+    - RFM 및 세그먼트 분석 VIEW 정규화 기준으로 재작성
+    - 기존 VIEW 업데이트 과정에서 컬럼명 불일치 문제 발생
+      - alias 매핑(예: customer_id ↔ customerid)으로 안정적 구조 전환
+
 - [x] 코호트 분석
   - **목표**: 고객의 시간에 따른 재구매 패턴 파악
 
