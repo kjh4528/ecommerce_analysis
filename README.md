@@ -1,19 +1,35 @@
 # ecommerce_analysis
-PostgreSQL 기반 이커머스 고객 코호트 분석 및 시각화
 
 ## 📌 프로젝트 개요
-온라인 쇼핑몰 고객 데이터를 분석하여 매출 최적화 전략 수립
+본 프로젝트는 UK 온라인 리테일 거래 데이터를 활용하여  
+이커머스 서비스에서 발생하는 고객 구매 데이터를  
+DB → 분석 → 시각화까지 하나의 흐름으로 진행하였다. 
+
+PostgreSQL을 활용해 데이터를 적재하고,  
+SQL과 Python을 통해 고객 행동을 분석하여  
+데이터 기반 의사결정에 활용 가능한 인사이트를 도출하는 것을 목표로 하였다.
 
 - **작업 기간**: 2025.12.13 ~ 진행 중
-- **목적**: 고객 리텐션 분석 및 세그먼트별 마케팅 전략 수립
 - **데이터**: Kaggle Online Retail Dataset (2010-2011, 약 50만 건)
-- **기술 스택**: PostgreSQL, Python, jupyter Notebook, DBeaver, Tableau, Git
+- **기술 스택**:
+	- Database: PostgreSQL(DBeaver)
+	- Analysis: SQL,Python (pandas, numpy)
+	- Visualization: matplotlib, seaborn
+	- Version Control: Git, GitHub
 
-## 🎯 분석 목표
+
+## 🎯 프로젝트 목표
+
+- 실무 환경과 유사하게 DB에 저장된 데이터를 기반으로 분석 수행
+- 이커머스 고객 구매 데이터를 활용한 대표 분석 기법 경험
+- 분석 결과를 비즈니스 관점에서 해석하는 연습
+- 분석을 고려한 DB 구조 및 SQL 활용 경험
+
+- **주요 분석 목표**
 1. 코호트 분석: 월별 신규 고객의 재구매율 추적
 2. RFM 세그먼테이션: 고객 등급화 및 타겟팅
 3. 퍼널 분석: 구매 전환율 개선 포인트 도출
-4. Tableau 대시보드: 실시간 모니터링 환경 구축
+
 
 ## 📂 프로젝트 구조
 ```
