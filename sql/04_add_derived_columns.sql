@@ -1,10 +1,13 @@
 -- ============================================
 -- 파생변수 추가 및 인덱스 생성
+-- 파생변수 추가 목적: 특정 분석 기법의 계산 복잡도를 낮추고 데이터 가독성을 높이기 위함
+-- 구매 금액(totalprice) 산출 시 반복되는 연산 제거, 코호트의 첫구매월 계산, 월 단위 그룹핑, 요일별/시간대별 구매 패턴 파악 등 
+-- 인덱스 역시 자주 조회되는 고객식별자(customerid),invoicedate (주문 일자),yearmonth (연월) 위주로 추가함
 -- ============================================
 
 -- 1. 파생변수 컬럼 추가
 --ALTER TABLE cleaned_data 
---    ADD COLUMN IF NOT EXISTS totalprice DECIMAL(10, 2),
+--    ADD COLUMN IF NOT EXISTS totalprice DECIMAL(10, 2),  --정밀한 숫자를 저장하기 위한 고정 소수점(12345678.90 형태)
 --    ADD COLUMN IF NOT EXISTS year INTEGER,
 --    ADD COLUMN IF NOT EXISTS month INTEGER,
 --    ADD COLUMN IF NOT EXISTS yearmonth VARCHAR(7),
