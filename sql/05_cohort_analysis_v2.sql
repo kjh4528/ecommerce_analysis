@@ -90,3 +90,60 @@ FROM cohort_retention
 WHERE month_number BETWEEN 1 AND 3
 GROUP BY cohort_month
 ORDER BY avg_retention_3months DESC;
+
+-------------------------------------------------------------
+
+-- 가장 성적이 좋은 '2010-12'코호트가 왜 충성도가 높은지 확인하고자 함
+-- 2010-12 코호트 고객들이 가장 많이 구매한 상품 리스트 조회 ->'충성 고객을 만드는 킬러 아이템'을 정의하는 데 도움
+WITH customer_cohort AS (
+    SELECT 
+        customerid,
+        TO_CHAR(MIN(invoicedate), 'YYYY-MM') AS cohort_month
+    FROM cleaned_data
+    WHERE customerid IS NOT NULL
+    GROUP BY customerid
+)
+SELECT 
+    d.description,  -- 상품명
+    COUNT(*) AS order_count,
+    SUM(d.quantity) AS total_quantity,
+    SUM(d.totalprice) AS total_revenue
+FROM cleaned_data d
+JOIN customer_cohort c ON d.customerid = c.customerid
+WHERE c.cohort_month = '2010-12' -- 가장 성적이 좋은 코호트 지정
+GROUP BY d.description
+ORDER BY total_quantity DESC
+LIMIT 10;
+
+
+-- 반대로 리텐션이 낮은 '취약 코호트'를 대상으로 이탈 원인을 파악하고자 함
+-- 그들의 특성을 파악하기 위해 해당 코호트의 첫 구매 상품을 뽑아보고 만족도가 낮았던 상품 확인
+WITH customer_first_order AS (
+    -- 고객별 첫 주문의 invoicedate와 ID를 가져옴
+    SELECT 
+        customerid,
+        MIN(invoicedate) AS first_invoicedate
+    FROM cleaned_data
+    WHERE customerid IS NOT NULL
+    GROUP BY customerid
+),
+cohort_first_items AS (
+    -- 첫 주문 시점에 구매했던 구체적인 상품 정보 매칭
+    SELECT 
+        TO_CHAR(f.first_invoicedate, 'YYYY-MM') AS cohort_month,
+        d.description,
+        d.quantity,
+        d.unitprice
+    FROM cleaned_data d
+    JOIN customer_first_order f ON d.customerid = f.customerid 
+                               AND d.invoicedate = f.first_invoicedate
+)
+SELECT 
+    cohort_month,
+    description,
+    COUNT(*) AS customer_count, -- 이 상품을 첫 구매로 선택한 고객 수
+    ROUND(AVG(unitprice), 2) AS avg_price
+FROM cohort_first_items
+WHERE cohort_month IN ('2011-03', '2011-09') -- 취약 코호트 지정
+GROUP BY cohort_month, description
+ORDER BY cohort_month, customer_count DESC

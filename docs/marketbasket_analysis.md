@@ -1,5 +1,27 @@
 # 장바구니 분석 (Market Basket Analysis)
 
+**분석 요약**
+1. 전체 분석 대상:
+   - 주문 수: 18,402개
+   - 상품 수: 3,659개
+   - 고객 수: 4,334명
+2. 빈발 항목 집합:
+   - 최소 지지도: 2.0%
+     - 초기 1% 설정 시 연산 속도 이슈로 2%로 튜닝
+   - 발견된 빈발 항목: 242개
+3. 연관 규칙:
+   - 생성된 전체 규칙: 76개
+   - 필터링 후 의미 있는 규칙: 68개
+     - Lift > 2
+     - Confidence > 30%
+     - Support > 1%
+4. 주요 인사이트:
+1위 항목: ROSES REGENCY TEACUP AND SAUCER , GREEN REGENCY TEACUP AND SAUCER → PINK REGENCY TEACUP AND SAUCER
+- Lift: 23.86 | Confidence: 72.1% | Support: 2.12%
+- 해석: 'ROSES REGENCY TEACUP AND SAUCER , GREEN REGENCY TEACUP AND SAUCER'를 구매한 고객은 일반 고객보다 23.9배 더 'PINK REGENCY TEACUP AND SAUCER'를 구매함
+
+
+
 ## 1. 분석 개요
 
 ### 1.1 장바구니 분석의 필요성
