@@ -1,4 +1,4 @@
-# 세그먼트별 상품 선호도 분석 (Segment Product Preference Analysis)
+# 세그먼트별 상품 선호도 분석 <br>(Segment Product Preference Analysis)
 
 
 
@@ -52,37 +52,37 @@ RFM 분석을 통해 도출된 고객 세그먼트별로 선호하는 상품 및
 
 #### 기존 뷰
 
-- `rfm\_customer\_segments\_v2` : 고객별 RFM 세그먼트 정보
+- `rfm_customer_segments_v2` : 고객별 RFM 세그먼트 정보
 
-- `rfm\_summary\_v2` : 세그먼트별 요약 통계
+- `rfm_summary_v2` : 세그먼트별 요약 통계
 
 
 
 #### 추가 생성 뷰
 
-- `segment\_product\_purchases`  
+- `segment_product_purchases`  
 
 &nbsp; : 세그먼트별 상품 구매 상세 내역 (메인 분석 테이블)
 
-- `segment\_product\_summary`  
+- `segment_product_summary`  
 
 &nbsp; : 세그먼트 × 상품 단위 요약
 
-- `champions\_vs\_new\_products`  
+- `champions_vs_new_products`  
 
 &nbsp; : VIP(Champions) vs 신규 고객 구매 비교
 
-- `segment\_top\_products`  
+- `segment_top_products`  
 
 &nbsp; : 세그먼트별 상위 상품 TOP N
 
-- `segment\_purchase\_patterns`  
+- `segment_purchase_patterns`  
 
 &nbsp; : 세그먼트별 구매 패턴 요약 (빈도, 금액, 다양성 등)
 
 
 
-> 본 분석에서는 SQL에서 집계 및 정합성을 확보한 후,
+> 본 분석에서는 SQL에서 집계 및 정합성을 확보한 후,<br>
 > Python에서 탐색적 분석 및 시각화를 수행하였다.
 
 
@@ -130,7 +130,7 @@ RFM 분석을 통해 도출된 고객 세그먼트별로 선호하는 상품 및
 
 - **선호도 지수**
 
-&nbsp; - (세그먼트 내 특정 카테고리 구매 비중)  ÷ (전체 고객의 해당 카테고리 구매 비중)
+&nbsp; (세그먼트 내 특정 카테고리 구매 비중)  ÷ (전체 고객의 해당 카테고리 구매 비중)
 
 
 
@@ -166,23 +166,23 @@ RFM 분석을 통해 도출된 고객 세그먼트별로 선호하는 상품 및
 ### Step 5. 시각화 산출물
 
 
-- `spa\_segment\_purchase\_patterns.png`  
+- `spa_segment_purchase_patterns.png`  
 
 &nbsp; : 세그먼트별 구매 패턴 비교
 
-- `spa\_champions\_vs\_new\_comparison.png`  
+- `spa_champions_vs_new_comparison.png`  
 
 &nbsp; : Champions vs New 주요 지표 비교
 
-- `spa\_champions\_vs\_new\_top\_products.png`  
+- `spa_champions_vs_new_top_products.png`  
 
 &nbsp; : 두 그룹의 TOP 10 상품
 
-- `spa\_segment\_top5\_products.png`  
+- `spa_segment_top5_products.png`  
 
 &nbsp; : 주요 세그먼트별 TOP 5 상품
 
-- `spa\_segment\_product\_heatmap.png`  
+- `spa_segment_product_heatmap.png`  
 
 &nbsp; : 세그먼트 × 상품/카테고리 히트맵
 
