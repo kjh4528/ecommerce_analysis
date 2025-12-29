@@ -26,7 +26,7 @@
 
 ### 1.1 장바구니 분석의 필요성
 
-__장바구니 분석(MBA, Market Basket Analysis)__은  
+<b>장바구니 분석(MBA, Market Basket Analysis)</b>은  
 고객이 하나의 주문에서 함께 구매한 상품 패턴을 분석하여  
 상품 간 연관 규칙을 찾는 분석 기법
 
