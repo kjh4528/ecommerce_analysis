@@ -71,7 +71,7 @@
 --        purchase_stage,
 --        COUNT(DISTINCT customerid) AS customer_count
 --    FROM customer_purchase_stages
---    GROUP BY purchase_stage
+--    GROUP BY purchase_stage  --그룹화로 인해 전체 총계는 아래에서 다시 계산
 --),
 --total_customers AS (
 --    SELECT COUNT(DISTINCT customerid) AS total 
@@ -81,6 +81,7 @@
 --    sc.purchase_stage,
 --    sc.customer_count,
 --    ROUND(sc.customer_count * 100.0 / tc.total, 2) AS percentage_of_total,
+--    -- LAG 이용하여 이전단계 대비 전환율과 이탈율 계산
 --    ROUND(sc.customer_count * 100.0 / 
 --          LAG(sc.customer_count) OVER (ORDER BY sc.purchase_stage), 2) AS conversion_rate,
 --    ROUND(100 - (sc.customer_count * 100.0 / 
@@ -106,9 +107,9 @@
 --SELECT 
 --    segment_name,
 --    purchase_stage,
---    COUNT(DISTINCT customerid) AS customer_count,
---    ROUND(AVG(total_orders), 2) AS avg_orders,
---    ROUND(AVG(total_spent), 2) AS avg_spent
+--    COUNT(DISTINCT customerid) AS customer_count, --양적 측면
+--    ROUND(AVG(total_orders), 2) AS avg_orders,    --세그먼트 타당성 검토 가능, 충성도 
+--    ROUND(AVG(total_spent), 2) AS avg_spent       --질적 측면, 세그먼트의 객단가
 --FROM customer_stage_segment
 --WHERE segment_name IS NOT NULL
 --GROUP BY segment_name, purchase_stage
@@ -151,10 +152,15 @@
 --    segment_name,
 --    purchase_stage,
 --    customer_count,
+--    -- 해당 세그먼트 모든 단계 인원의 합 대비 현재 단계의 인원
+--    -- 단계가 진행될수록 수치가 계속 작아지면 정상적인 퍼널 모양
 --    ROUND(customer_count * 100.0 / 
 --          SUM(customer_count) OVER (PARTITION BY segment_name), 2) AS pct_within_segment,
+--    -- 특정 세그먼트 안에서 이전 단계 대비 전환율 
+--    -- 어느 구간에서 수치가 급락하는지 병목 구간 확인 가능 
 --    ROUND(customer_count * 100.0 / 
 --          LAG(customer_count) OVER (PARTITION BY segment_name ORDER BY purchase_stage), 2) AS stage_conversion_rate
+--    -- 전체 대비 비율 구해야하므로 groupby가 아닌 partition by 윈도우 함수 사용)
 --FROM segment_funnel
 --ORDER BY 
 --    CASE segment_name
