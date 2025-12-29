@@ -64,13 +64,13 @@
 --    frequency,
 --    monetary_value,
 --    
---     R 점수: Recency는 낮을수록 좋으므로 역순 (6 - NTILE)
+--    -- R 점수: Recency는 낮을수록 좋으므로 역순 (6 - NTILE)
 --    6 - NTILE(5) OVER (ORDER BY recency_days) AS r_score,
 --    
---     F 점수: Frequency는 높을수록 좋음
+--    -- F 점수: Frequency는 높을수록 좋음
 --    NTILE(5) OVER (ORDER BY frequency) AS f_score,
 --    
---     M 점수: Monetary는 높을수록 좋음
+--    -- M 점수: Monetary는 높을수록 좋음
 --    NTILE(5) OVER (ORDER BY monetary_value) AS m_score
 --FROM 
 --    rfm_raw
