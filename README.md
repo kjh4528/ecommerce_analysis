@@ -49,10 +49,10 @@ SQL과 Python을 통해 고객 행동을 분석하여
 4. SQL 및 Python을 활용한 분석
 5. 시각화 및 인사이트 도출
 
-## 프로젝트 초기 설정
+#### 프로젝트 초기 설정
 - git ignore
 
-## 데이터 전처리 및 품질 관리
+#### 데이터 전처리 및 품질 관리
 1. **EDA** 후 아래의 내용 확인
   - 결측치 분석: CustomerID 24.9%, Description 0.27%
   - 이상치 발견: 음수 수량 및 금액 10,624건 -> 취소 및 반품 주문으로 추정
@@ -62,22 +62,22 @@ SQL과 Python을 통해 고객 행동을 분석하여
   - 데이터 타입 변환: InvoiceDate(datetime)
   - 전처리 기준 및 의사결정 근거는 'docs/preprocessing_decision.md`에 상세히 기록
 
-## PostgreSQL DB 구축 
+#### PostgreSQL DB 구축 
 - '01_create_table&load_data.sql': sql 테이블 생성 및 데이터 적재 쿼리
 - '03_sql_load_data.ipynb': 파이썬으로 sql 데이터 로드  
 - 'docs/db_nomalization_log' : 데이터 모델 정규화 및 구조 개선    
 
 
-## 주요 분석 요약
+## 주요 분석 내용 
 
-### 코호트 분석
+### 1. 코호트 분석
 - 월별 신규 고객 기준 재구매 패턴 분석
 - 리텐션율 히트맵 시각화
 - 첫 구매 이후 이탈 구간 확인
 **분석 쿼리**
 `03_cohort_analysis.sql` -> 04 -> `05_cohort_analysis_v2.sql` 과정으로 단순화 및 성능 향상
 
-### RFM 세그먼테이션
+### 2. RFM 세그먼테이션
 - 고객을 구매 행동 패턴(Recency, Frequency, Monetary)에 따라 9개 세그먼트로 분류
 - 세그먼트 기준 재조정으로 분류 정확도 개선
 - 이탈 위험 고객(At Risk) 비중 명확화
@@ -89,12 +89,12 @@ SQL과 Python을 통해 고객 행동을 분석하여
  'sql/07_rfm_analysis_v2.sql', 그 외의 상세 분석은 'docs/','sql/','notebooks/' 디렉토리 내의 rfm_파일 참고
 
 
-### 퍼널 분석 (세그먼트별 전환율 비교)
+### 3. 퍼널 분석 (세그먼트별 전환율 비교)
 - 첫 구매 → 재구매 → 충성 고객 전환 퍼널 정의
 - 첫 재구매 구간이 가장 큰 병목 구간임을 확인
 - 세그먼트별 전환율 차이 비교
 
-### 상품 연관 / 선호도 분석
+### 4. 상품 연관 / 선호도 분석
 - 장바구니 분석(Market Basket Analysis) 
 	- Market Basket Analysis를 통한 연관 규칙 도출
 - RFM 세그먼트별 상품 선호도 분석
