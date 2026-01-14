@@ -1,6 +1,6 @@
 # ecommerce_analysis
 
-- **작업 기간**: 2025.12.13 ~ 진행 중
+- **작업 기간**: 2025.12.13 ~ 2025.12.13
 - **데이터**: Kaggle Online Retail Dataset (2010-2011, 약 50만 건)
 
 ## 📌 프로젝트 개요
@@ -77,6 +77,7 @@ SQL과 Python을 통해 고객 행동을 분석하여
 - 첫 구매 이후 이탈 구간 확인
 **분석 쿼리**
 `03_cohort_analysis.sql` -> 04 -> `05_cohort_analysis_v2.sql` 과정으로 단순화 및 성능 향상
+  ![cohort_analysis](docs/images/cohort_heatmap.png)
 
 ### 2. RFM 세그먼테이션
 - 고객을 구매 행동 패턴(Recency, Frequency, Monetary)에 따라 9개 세그먼트로 분류
@@ -94,6 +95,7 @@ SQL과 Python을 통해 고객 행동을 분석하여
 - 첫 구매 → 재구매 → 충성 고객 전환 퍼널 정의
 - 첫 재구매 구간이 가장 큰 병목 구간임을 확인
 - 세그먼트별 전환율 차이 비교
+  ![funnel](docs/images/01_funnel_overview.png)
 
 ### 4. 상품 연관 / 선호도 분석
 - 장바구니 분석(Market Basket Analysis) 
